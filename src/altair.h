@@ -12,6 +12,7 @@ struct AString;
 
 
 struct Application {
+    int argc;
     QApplication *app;
     QQmlApplicationEngine *engine;
 };

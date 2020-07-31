@@ -5,6 +5,7 @@ use std::os::raw::c_char;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct Application {
+    argc: i32,
     app: *const c_void,
     engine: *const c_void,
 }

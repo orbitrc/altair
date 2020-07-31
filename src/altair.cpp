@@ -1,14 +1,17 @@
 #include "altair.h"
 
 #include <cstring>
+#include <iostream>
 
 extern "C" {
 
 Application Application__new(int argc, char *argv[])
 {
-    QApplication *app = new QApplication(argc, argv);
+    Application application = { argc, NULL, NULL };
+    QApplication *app = new QApplication(application.argc, argv);
     QQmlApplicationEngine *engine = new QQmlApplicationEngine;
-    Application application = { app, engine };
+    application.app = app;
+    application.engine = engine;
 
     return application;
 }
@@ -21,6 +24,7 @@ void Application__load(Application application, AString url)
 
 int Application__exec(Application application)
 {
+    std::cout << "exec" << std::endl;
     return application.app->exec();
 }
 
@@ -36,9 +40,9 @@ AByteArray AByteArray__new(const unsigned char *data, size_t len)
 
 AString AByteArray__to_a_string(AByteArray arr)
 {
-    QByteArray qba = QByteArray(arr.data, arr.len);
+    QByteArray qba = QByteArray((const char*)(arr.data), arr.len);
     QString *qstr = new QString(qba);
-    AString str = { &qstr };
+    AString str = { qstr };
 
     return str;
 }

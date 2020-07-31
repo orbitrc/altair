@@ -17,17 +17,29 @@ fn main() {
         .arg(&format!("{}/altair.o", out_dir))
         .status();
     match gpp {
-        Ok(_exit_status) => {}
+        Ok(exit_status) => {
+            if !exit_status.success() {
+                panic!("g++ compile error with status {}", exit_status.code().unwrap());
+            }
+        }
         Err(e) => panic!("g++ compile error: {:?}", e),
     }
 
-    Command::new("ar")
+    let ar = Command::new("ar")
         .args(&["rcs", "libaltair.a"])
         .arg("altair.o")
         .current_dir(&Path::new(&out_dir))
-        .status()
-        .unwrap();
+        .status();
+    match ar {
+        Ok(_exit_status) => {}
+        Err(e) => panic!("ar error: {:?}", e),
+    }
 
     println!("cargo:rustc-link-search=native={}", out_dir);
     println!("cargo:rustc-link-lib=static=altair");
+
+    println!("cargo:rustc-link-lib=dylib=Qt5Core");
+    println!("cargo:rustc-link-lib=dylib=Qt5Widgets");
+    println!("cargo:rustc-link-lib=dylib=Qt5Qml");
+    println!("cargo:rustc-link-lib=dylib=stdc++");
 }
