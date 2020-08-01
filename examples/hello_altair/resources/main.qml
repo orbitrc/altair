@@ -1,5 +1,7 @@
 import QtQuick.Window 2.12
 
+import HelloWorld 1.0
+
 Window {
   id: root
 
@@ -7,4 +9,8 @@ Window {
 
   width: 300
   height: 300
+
+  HelloWorld {
+    anchors.fill: parent
+  }
 }

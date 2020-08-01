@@ -21,6 +21,13 @@ Application Application__new(int argc, char *argv[])
     return application;
 }
 
+void Application__add_qml_import_path(Application application, AString path)
+{
+    std::cout << "Application__add_qml_import_path - " << path.ptr->toStdString() << std::endl;
+    application.engine->addImportPath(*(path.ptr));
+    AString__drop(path);
+}
+
 void Application__load(Application application, AString url)
 {
     std::cout << "load: " << url.ptr->toUtf8().toStdString() << std::endl;

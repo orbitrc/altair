@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>qml/HelloWorld/qmldir</file>
+        <file>qml/HelloWorld/HelloWorld.qml</file>
     </qresource>
 </RCC>

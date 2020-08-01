@@ -18,6 +18,7 @@ struct Application {
 };
 
 Application Application__new(int argc, char *argv[]);
+void Application__add_qml_import_path(Application application, AString path);
 void Application__load(Application application, AString url);
 int Application__exec(Application application);
 

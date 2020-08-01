@@ -1,4 +1,5 @@
 pub mod env;
+pub mod build;
 
 use std::ffi::c_void;
 // use std::ffi::CString;
@@ -14,6 +15,7 @@ pub struct Application {
 
 extern "C" {
     fn Application__new(argc: i32, argv: *const *const c_char) -> Application;
+    fn Application__add_qml_import_path(application: Application, path: AString);
     fn Application__load(application: Application, url: AString);
     fn Application__exec(application: Application) -> i32;
 }
@@ -22,6 +24,13 @@ impl Application {
     pub fn new(argc: i32, argv: &Vec<*const c_char>) -> Application {
         unsafe {
             Application__new(argc, argv.as_ptr())
+        }
+    }
+
+    pub fn add_qml_import_path(&self, path: &str) {
+        let a_str = AString::from_string(&String::from(path));
+        unsafe {
+            Application__add_qml_import_path(*self, a_str);
         }
     }
 
