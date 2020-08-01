@@ -14,7 +14,7 @@ pub struct Application {
 
 extern "C" {
     fn Application__new(argc: i32, argv: *const *const c_char) -> Application;
-    fn Application__load(url: AString);
+    fn Application__load(application: Application, url: AString);
     fn Application__exec(application: Application) -> i32;
 }
 
@@ -25,10 +25,10 @@ impl Application {
         }
     }
 
-    pub fn load(url: String) {
+    pub fn load(&self, url: String) {
         let a_str = AString::from_string(&url);
         unsafe {
-            Application__load(a_str);
+            Application__load(*self, a_str);
         }
     }
 
@@ -80,7 +80,7 @@ impl AString {
         }
     }
 
-    fn from_string(s: &String) -> AString {
+    pub fn from_string(s: &String) -> AString {
         AString__from_string(s)
     }
 }

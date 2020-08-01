@@ -7,6 +7,8 @@ fn main() {
     let argv = env::argv();
 
     let app = Application::new(argc, &argv);
+    let url = String::from("qrc:/main.qml");
+    app.load(url);
 
     app.exec();
 }

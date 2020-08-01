@@ -23,6 +23,7 @@ Application Application__new(int argc, char *argv[])
 
 void Application__load(Application application, AString url)
 {
+    std::cout << "load: " << url.ptr->toUtf8().toStdString() << std::endl;
     application.engine->load(*(url.ptr));
     AString__drop(url);
 }
@@ -36,7 +37,7 @@ int Application__exec(Application application)
 
 AByteArray AByteArray__new(const unsigned char *data, size_t len)
 {
-    AByteArray byte_array = { 0, NULL };
+    AByteArray byte_array = { len, NULL };
     byte_array.data = new unsigned char[len];
     memcpy(byte_array.data, data, len);
 
