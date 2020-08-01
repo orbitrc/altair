@@ -1,5 +1,7 @@
+pub mod env;
+
 use std::ffi::c_void;
-use std::ffi::CString;
+// use std::ffi::CString;
 use std::os::raw::c_char;
 
 #[repr(C)]
@@ -17,11 +19,9 @@ extern "C" {
 }
 
 impl Application {
-    pub fn new(args: std::env::Args) -> Application {
-        let v_args = args.map(|arg| CString::new(arg).unwrap()).collect::<Vec<CString>>();
-        let argv = v_args.iter().map(|arg| arg.as_ptr()).collect::<Vec<*const c_char>>();
+    pub fn new(argc: i32, argv: &Vec<*const c_char>) -> Application {
         unsafe {
-            Application__new(argv.len() as i32, argv.as_ptr())
+            Application__new(argc, argv.as_ptr())
         }
     }
 

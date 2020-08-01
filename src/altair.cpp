@@ -2,11 +2,16 @@
 
 #include <cstring>
 #include <iostream>
+#include <cstdio>
 
 extern "C" {
 
 Application Application__new(int argc, char *argv[])
 {
+    std::cout << "Application__new - argc: " << argc << std::endl;
+    printf("%p\n", argv);
+    printf("%p\n", argv[0]);
+
     Application application = { argc, NULL, NULL };
     QApplication *app = new QApplication(application.argc, argv);
     QQmlApplicationEngine *engine = new QQmlApplicationEngine;
