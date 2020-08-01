@@ -1,20 +1,16 @@
 use std::process::Command;
 use std::path::Path;
 
+use altair::build::Rcc;
+
 fn main() {
     let out_dir = std::env::var("OUT_DIR").unwrap();
 
-    let rcc = Command::new("rcc")
-        .args(&["resources/resources.qrc", "-o"])
-        .arg(&format!("{}/qrc_resources.cpp", out_dir))
-        .status();
+    let rcc = Rcc::new()
+        .build();
     match rcc {
-        Ok(exit_status) => {
-            if !exit_status.success() {
-                panic!("rcc error with status {}", exit_status.code().unwrap());
-            }
-        }
-        Err(e) => panic!("rcc error: {:?}", e),
+        Ok(_) => {}
+        Err(e) => panic!("{}", e),
     }
 
     let rcc_gpp = Command::new("g++")

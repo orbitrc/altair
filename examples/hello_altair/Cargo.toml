@@ -6,3 +6,6 @@ edition = "2018"
 
 [dependencies]
 altair = { path = "../.." }
+
+[build-dependencies]
+altair = { path = "../.." }
