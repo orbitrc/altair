@@ -1,5 +1,6 @@
 pub mod env;
 pub mod build;
+pub mod transpiler;
 
 use std::ffi::c_void;
 // use std::ffi::CString;
@@ -30,14 +31,14 @@ impl Application {
     pub fn add_qml_import_path(&self, path: &str) {
         let a_str = AString::from_string(&String::from(path));
         unsafe {
-            Application__add_qml_import_path(*self, a_str);
+            Application__add_qml_import_path(*self, a_str.clone());
         }
     }
 
     pub fn load(&self, url: String) {
         let a_str = AString::from_string(&url);
         unsafe {
-            Application__load(*self, a_str);
+            Application__load(*self, a_str.clone());
         }
     }
 
@@ -71,26 +72,55 @@ impl Drop for AByteArray {
 }
 
 
+/// A borrowed version of AString.
 #[repr(C)]
 #[derive(Clone, Copy)]
+pub struct AStringRef {
+    ptr: *const c_void,
+}
+
+extern "C" {
+    fn AString__to_a_string(s: AStringRef) -> AString;
+}
+
+impl AStringRef {
+    pub fn to_a_string(&self) -> AString {
+        unsafe {
+            AString__to_a_string(*self)
+        }
+    }
+}
+
+
+#[repr(C)]
+#[derive(Clone)]
 pub struct AString {
     ptr: *mut c_void,
 }
 
 extern "C" {
     fn AString__len(s: AString) -> usize;
-    // fn AString__drop(s:AString);
+    fn AString__drop(s:AString);
 }
 
 impl AString {
     pub fn len(&self) -> usize {
         return unsafe {
-            AString__len(*self)
+            AString__len(self.clone())
         }
     }
 
     pub fn from_string(s: &String) -> AString {
         AString__from_string(s)
+    }
+}
+
+impl Drop for AString {
+    fn drop(&mut self) {
+        unsafe {
+            AString__drop(self.clone());
+        }
+        println!("dropped!");
     }
 }
 

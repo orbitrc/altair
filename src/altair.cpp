@@ -6,6 +6,9 @@
 
 extern "C" {
 
+//======================
+// Application
+//======================
 Application Application__new(int argc, char *argv[])
 {
     std::cout << "Application__new - argc: " << argc << std::endl;
@@ -25,14 +28,12 @@ void Application__add_qml_import_path(Application application, AString path)
 {
     std::cout << "Application__add_qml_import_path - " << path.ptr->toStdString() << std::endl;
     application.engine->addImportPath(*(path.ptr));
-    AString__drop(path);
 }
 
 void Application__load(Application application, AString url)
 {
     std::cout << "load: " << url.ptr->toUtf8().toStdString() << std::endl;
     application.engine->load(*(url.ptr));
-    AString__drop(url);
 }
 
 int Application__exec(Application application)
@@ -42,6 +43,9 @@ int Application__exec(Application application)
 }
 
 
+//================
+// AByteArray
+//================
 AByteArray AByteArray__new(const unsigned char *data, size_t len)
 {
     AByteArray byte_array = { len, NULL };
@@ -66,6 +70,21 @@ void AByteArray__drop(AByteArray arr)
 }
 
 
+//===================
+// AStringRef
+//===================
+AString AStringRef__to_a_string(AStringRef str_ref)
+{
+    AString a_string = { NULL };
+    a_string.ptr = new QString(*str_ref.ptr);
+
+    return a_string;
+}
+
+
+//===================
+// AString
+//===================
 size_t AString__len(AString str)
 {
     return str.ptr->length();
@@ -74,6 +93,7 @@ size_t AString__len(AString str)
 void AString__drop(AString str)
 {
     delete str.ptr;
+    std::cout << "Dropped in C++" << std::endl;
 }
 
 } // extern "C"

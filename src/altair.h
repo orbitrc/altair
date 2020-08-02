@@ -11,6 +11,9 @@ extern "C" {
 struct AString;
 
 
+//=====================
+// Application
+//=====================
 struct Application {
     int argc;
     QApplication *app;
@@ -23,6 +26,9 @@ void Application__load(Application application, AString url);
 int Application__exec(Application application);
 
 
+//===================
+// AByteArray
+//===================
 struct AByteArray {
     size_t len;
     unsigned char *data;
@@ -33,6 +39,19 @@ AString AByteArray__to_a_string(AByteArray arr);
 void AByteArray__drop(AByteArray arr);
 
 
+//==================
+// AStringRef
+//==================
+struct AStringRef {
+    QString *ptr;
+};
+
+AString AStringRef__to_a_string(AStringRef str_ref);
+
+
+//==================
+// AString
+//==================
 struct AString {
     QString *ptr;
 };
