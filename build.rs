@@ -1,5 +1,6 @@
 use std::path::Path;
 use std::process::Command;
+use std::fs;
 
 fn main() {
     let out_dir = std::env::var("OUT_DIR").unwrap();
@@ -33,6 +34,12 @@ fn main() {
     match ar {
         Ok(_exit_status) => {}
         Err(e) => panic!("ar error: {:?}", e),
+    }
+
+    let copy = fs::copy("src/altair.h", &format!("{}/altair.h", out_dir));
+    match copy {
+        Ok(_) => {}
+        Err(e) => panic!("altair.h file copy is failed: {}", e),
     }
 
     println!("cargo:rustc-link-search=native={}", out_dir);
