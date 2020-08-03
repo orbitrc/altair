@@ -2,6 +2,7 @@ use std::process::Command;
 use std::path::Path;
 
 use altair::build::Rcc;
+use altair::build::find_out_dir;
 
 fn main() {
     let out_dir = std::env::var("OUT_DIR").unwrap();

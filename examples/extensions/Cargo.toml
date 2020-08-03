@@ -1,0 +1,11 @@
+[package]
+name = "extensions"
+version = "0.1.0"
+authors = ["Yujeonja <hardboiled65@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+altair = { path = "../.." }
+
+[build-dependencies]
+altair = { path = "../.." }
