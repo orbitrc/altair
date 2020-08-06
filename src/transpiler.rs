@@ -111,6 +111,7 @@ impl Transpiler {
             Some(m) => m,
             None => panic!("Cannot find members part in the file."),
         };
+        let members_part = &s[mat.start()..mat.end()];
     }
 
     // pub fn parse(s: &str) -> Transpiler {
