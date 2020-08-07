@@ -19,6 +19,7 @@ struct Class {
     derive: DeriveType,
 }
 
+#[derive(Debug)]
 struct Member {
     member_type: String,
     name: String,
@@ -112,6 +113,23 @@ impl Transpiler {
             None => panic!("Cannot find members part in the file."),
         };
         let members_part = &s[mat.start()..mat.end()];
+        let mut members: Vec<Member> = vec![];
+        for line in members_part.lines() {
+            if line.starts_with("[members") {
+                continue;
+            }
+            if line.trim() == "" {
+                continue;
+            }
+            let kv = line.split(":").map(|x| x.trim()).collect::<Vec<&str>>();
+            let member = Member {
+                member_type: kv[1].to_string(),
+                name: kv[0].to_string(),
+            };
+            members.push(member);
+        }
+
+        members
     }
 
     // pub fn parse(s: &str) -> Transpiler {
@@ -132,5 +150,12 @@ mod tests {
         let source = "[module]\nname = \"Foo\"\nversion = \"1.0\"\n\n[class]\nname = \"Foo\"\nderive = \"object\"\n";
         let class = super::Transpiler::parse_class(&source);
         println!("{:?}", class);
+    }
+
+    #[test]
+    fn transpiler_parse_members() {
+        let source = "[members]\nname: String\nage: i32\n";
+        let members = super::Transpiler::parse_members(&source);
+        println!("{:?}", members);
     }
 }
