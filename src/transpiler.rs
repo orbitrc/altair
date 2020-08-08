@@ -25,9 +25,15 @@ struct Member {
     name: String,
 }
 
+struct Arg {
+    arg_type: String,
+    name: String,
+}
+
 struct Method {
     name: String,
     return_type: String,
+    args: Vec<Arg>,
 }
 
 pub struct Transpiler {
@@ -130,6 +136,18 @@ impl Transpiler {
         }
 
         members
+    }
+
+    fn parse_methods(s: &str) -> Vec<Method> {
+        let re = Regex::new(r"\[methods\]\n(?s)[^[]+").unwrap();
+        let mat = match re.find(s) {
+            Some(m) => m,
+            None => panic!("Cannot find methods part in the file."),
+        };
+        let methods_part = &s[mat.start()..mat.end()];
+        let mut methods: Vec<Method> = vec![];
+
+        methods
     }
 
     // pub fn parse(s: &str) -> Transpiler {
