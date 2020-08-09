@@ -146,6 +146,14 @@ impl Transpiler {
         };
         let methods_part = &s[mat.start()..mat.end()];
         let mut methods: Vec<Method> = vec![];
+        for line in methods_part.lines() {
+            if line.starts_with("[methods") {
+                continue;
+            }
+            if line.trim() == "" {
+                continue;
+            }
+        }
 
         methods
     }
