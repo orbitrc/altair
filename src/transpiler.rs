@@ -32,7 +32,7 @@ struct Arg {
 
 struct Method {
     name: String,
-    return_type: String,
+    return_type: Option<String>,
     args: Vec<Arg>,
 }
 
@@ -153,6 +153,13 @@ impl Transpiler {
             if line.trim() == "" {
                 continue;
             }
+            // Method name.
+            let name_re = Regex::new(r"[^\(]+").unwrap();
+            let mat = match re.find(&line) {
+                Some(m) => m,
+                None => panic!(""),
+            };
+            let method_name = &line[mat.start()..mat.end()];
         }
 
         methods
