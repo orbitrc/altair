@@ -25,11 +25,13 @@ struct Member {
     name: String,
 }
 
+#[derive(Debug)]
 struct Arg {
     arg_type: String,
     name: String,
 }
 
+#[derive(Debug)]
 struct Method {
     name: String,
     return_type: Option<String>,
@@ -139,7 +141,7 @@ impl Transpiler {
     }
 
     fn parse_methods(s: &str) -> Vec<Method> {
-        let re = Regex::new(r"\[methods\]\n(?s)[^[]+").unwrap();
+        let re = Regex::new(r"\[methods\]\n(?s)[^\[]+").unwrap();
         let mat = match re.find(s) {
             Some(m) => m,
             None => panic!("Cannot find methods part in the file."),
@@ -155,11 +157,48 @@ impl Transpiler {
             }
             // Method name.
             let name_re = Regex::new(r"[^\(]+").unwrap();
-            let mat = match re.find(&line) {
+            let mat = match name_re.find(&line) {
+                Some(m) => m,
+                None => panic!("Cannot find a method name. line: {}", line),
+            };
+            let method_name = &line[mat.start()..mat.end()];
+            // Method args.
+            let mut method_args: Vec<Arg> = vec![];
+            let args_re = Regex::new(r"\(.*\)").unwrap();
+            let mat = match args_re.find(&line) {
                 Some(m) => m,
                 None => panic!(""),
             };
-            let method_name = &line[mat.start()..mat.end()];
+            let mut args_str = &line[mat.start()..mat.end()];
+            // Remove (, ).
+            args_str = &args_str[1..args_str.len() - 1];
+            for arg_str in args_str.split(",") {
+                if args_str == "" {
+                    continue;
+                }
+                let v = arg_str.split(":").map(|x| x.trim()).collect::<Vec<&str>>();
+                let arg = Arg {
+                    arg_type: v[1].to_string(),
+                    name: v[0].to_string(),
+                };
+                method_args.push(arg);
+            }
+            // Method return type.
+            let mut method_return: Option<String> = None;
+            if line.contains("->") {
+                let re = Regex::new(r"-> *(.+)").unwrap();
+                let cap = match re.captures(&line) {
+                    Some(c) => c,
+                    None => panic!("Method returns but not captured."),
+                };
+                method_return = Some(cap.get(1).unwrap().as_str().to_string());
+            }
+            let method = Method {
+                name: method_name.to_string(),
+                return_type: method_return,
+                args: method_args,
+            };
+            methods.push(method);
         }
 
         methods
@@ -190,5 +229,12 @@ mod tests {
         let source = "[members]\nname: String\nage: i32\n";
         let members = super::Transpiler::parse_members(&source);
         println!("{:?}", members);
+    }
+
+    #[test]
+    fn transpiler_parse_methods() {
+        let source = "[methods]\nget_older()\nfoo(a: String) -> String\n";
+        let methods = super::Transpiler::parse_methods(&source);
+        println!("{:?}", methods);
     }
 }
