@@ -38,12 +38,20 @@ struct Method {
     args: Vec<Arg>,
 }
 
+#[derive(Debug)]
+struct Property {
+    property_type: String,
+    read_method: String,
+    write_method: Option<String>,
+    notify_method: Option<String>,
+}
+
 pub struct Transpiler {
     module: Module,
     class: Class,
     members: Vec<Member>,
     methods: Vec<Method>,
-    properties: Vec<String>,
+    properties: Vec<Property>,
     signals: Vec<String>,
     slots: Vec<String>,
 }
@@ -202,6 +210,28 @@ impl Transpiler {
         }
 
         methods
+    }
+
+    fn parse_properties(s: &str) -> Vec<Property> {
+        let mut properties: Vec<Property> = vec![];
+
+        let re = Regex::new(r"\[properties\]\n(?s)[^\[]+").unwrap();
+        let mat = match re.find(s) {
+            Some(m) => m,
+            None => panic!("Cannot find properties part in the file."),
+        };
+        let properties_part = &s[mat.start()..mat.end()];
+        for line in properties_part.lines() {
+            if line.starts_with("[properties") {
+                continue;
+            }
+            if line.trim() == "" {
+                continue;
+            }
+            let re = Regex::new(r"").unwrap();
+        }
+
+        properties
     }
 
     // pub fn parse(s: &str) -> Transpiler {
